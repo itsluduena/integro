@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultora Mary Kay | Vilma Milovich</title>
+    <style>
+        :root {
+            --rosa-principal: #FFB5C0;
+            --rosa-oscuro: #e08b98;
+            --blanco: #ffffff;
+            --zoom-blue: #2D8CFF;
+            --rosa-fondo: #fff2f4; 
+            --sombra: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: var(--rosa-fondo);
+            background-image: 
+                linear-gradient(rgba(255, 242, 244, 0.7), rgba(255, 242, 244, 0.7)),
+                url('https://imgs.search.brave.com/qUoJqIzNVIR51OSXmMyAUC0CdUCuVAZli5CmqD3EDzI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wNC53/YWxscGFwZXJiZXR0/ZXIu/Y29tL3dhbGxw/YXBlci8zNC84MDgv/ODQxL2Zsb3dlcnMt/YmFja2dyb3VuZC1y/b3Nlcy1jb2xvcmZ1/bC1waW5rLWhkLXdh/bGxwYXBlci1wcmV2/aWV3LmpwZw');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* --- LOGOS --- */
+        .logo-container { position: absolute; top: 45px; z-index: 10; }
+        .logo-izq { left: 40px; }
+        
+        /* Modificado: Posición fija y centrada a la derecha */
+        .logo-der { 
+            position: fixed; 
+            right: 30px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            z-index: 100;
+        }
+        
+        .logo-izq img { height: 35px; width: auto; }
+        .logo-der img { height: 100px; width: auto; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.1)); }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--rosa-principal);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header h1 { 
+            font-size: 2.2rem;
+            margin: 0; 
+            text-transform: uppercase; 
+            text-shadow: 2px 2px 4px rgba(180, 100, 110, 0.3); 
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+       footer {
+            width: 100%;
+            display: block;
+            clear: both;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px 0;
+            text-align: center; /* <--- Esto centra el texto */
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--blanco);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--sombra);
+            border-top: 6px solid var(--rosa-principal);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        /* --- ZOOM CONTAINER --- */
+        .zoom-card {
+            background: #ffffff;
+            border-top: 6px solid var(--zoom-blue);
+            text-align: center;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .zoom-details { flex: 1; min-width: 250px; }
+
+        .zoom-box {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #cce4ff;
+            display: inline-block;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+       /* --- CARRUSEL PROPORCIONAL Y COMPLETO --- */
+        .carousel-card { 
+            position: relative; 
+            overflow: hidden; 
+            padding: 0 !important;
+            background: var(--blanco); /* Fondo blanco para que no haya negro */
+            display: flex;
+            flex-direction: column;
+            max-width: 500px; /* <--- Limitamos el ancho para que el alto no se dispare */
+            margin: 0 auto;
+            border-radius: 15px;
+        }
+        
+        .slide { 
+            width: 100%; 
+            display: none; 
+            animation: fadeIn 0.8s; 
+        }
+        
+        .slide.active { 
+            display: block; 
+        }
+        
+        /* Ajuste para ver el contenido COMPLETO sin cortes */
+        .slide img, .slide video { 
+            width: 100%; 
+            height: auto; 
+            display: block;
+            object-fit: contain; 
+        }
+
+        .slide-caption { 
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8); 
+            padding: 10px 0; 
+            text-align: center; 
+            color: var(--rosa-oscuro); 
+            font-weight: bold;
+            z-index: 5;
+        }
+        
+        /* Botones fuera del área central para no tapar el contenido */
+        .nav-btn {
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.4); 
+            border: 1px solid var(--rosa-principal); 
+            width: 35px; 
+            height: 35px; 
+            border-radius: 50%; 
+            z-index: 10;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: var(--rosa-principal); color: white; }
+        .next { right: 5px; } 
+        .prev { left: 5px; }
+
+        /* PERFIL */
+        .perfil-container { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--rosa-principal); overflow: hidden; margin-bottom: 15px; }
+        .perfil-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* BOTONES */
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s;
+            text-align: center;
+            margin: 5px;
+        }
+        .btn-rosa { background: var(--rosa-principal); color: white; }
+        .btn-rosa:hover { background: var(--rosa-oscuro); }
+        .btn-zoom { background: var(--zoom-blue); color: white; }
+        .btn-zoom:hover { background: #1a73e8; }
+        .btn-outline { border: 2px solid var(--rosa-principal); color: var(--rosa-oscuro); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+       @media (max-width: 768px) {
+            header { padding: 1.5rem 1rem; }
+            header h1 { font-size: 1.6rem; }
+            .container { grid-template-columns: 1fr; margin-top: 20px; }
+            .zoom-card { flex-direction: column; }
+            
+            /* Ajuste de Logos para celular */
+            .logo-izq { display: none; } /* Ocultamos el logo texto para ganar espacio */
+            
+            .logo-der { 
+                position: relative; /* Deja de estar fijo */
+                right: auto; 
+                top: auto; 
+                transform: none; 
+                text-align: center; 
+                margin: 10px 0;
+                z-index: 1;
+            }
+            .logo-der img { height: 60px; } /* Más pequeño en móvil */
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container logo-izq">
+        <img src="https://www.marykay.com.ar/content/public/images/MKlogo.png" alt="Mary Kay">
+    </div>
+
+    <header>
+        <h1>VILMA MILOVICH</h1>
+        <p>Líder Consultora de Belleza Independiente Mary Kay</p>
+    </header>
+
+    <div class="logo-der">
+        <img src="https://i.ibb.co/dsKZtzGn/4-sin-t-tulo-20260307222821.png" alt="Consultora">
+    </div>
+
+    <div class="main-content-wrapper" style="display: flex; gap: 20px; justify-content: center; align-items: flex-start; flex-wrap: wrap; max-width: 1000px; margin: 30px auto; padding: 0 20px;">
+
+        <div class="card" style="flex: 0 1 350px; margin: 0; min-width: 300px;">
+            <div class="perfil-container" style="margin: 0 auto 15px auto;">
+                <img src="https://i.ibb.co/kVNRDCzY/Whats-App-Image-2026-03-07-at-22-00-41.jpg" alt="Vilma" class="perfil-img">
+            </div>
+            <h2 style="text-align: center;">¡Hola!</h2>
+            <p style="text-align: center;">Soy Vilma, tu consultora de confianza. Estoy aquí para asesorarte en tu rutina de belleza.</p>
+            <a href="https://wa.me/+5493644661767" class="btn btn-rosa" style="width: 100%; box-sizing: border-box;">Chatear por WhatsApp</a>
+        </div>
+
+        <div class="card" style="flex: 0 1 350px; margin: 0; min-width: 300px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <h3 style="text-align: center; color: var(--rosa-oscuro); margin-top: 0; width: 100%;">Mi Ubicación</h3>
+            
+            <div style="background: var(--rosa-fondo); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 10px 0 20px 0; border: 2px dashed var(--rosa-principal);">
+                <span style="font-size: 40px;">📍</span>
+            </div>
+
+            <p style="font-size: 0.95rem; text-align: center; margin-bottom: 20px; color: #555; line-height: 1.4;">
+                <strong>P. Roque Sáenz Peña, Chaco</strong><br>
+                ¡Haz clic para ver cómo llegar!
+            </p>
+
+            <a href="https://www.google.com/maps?q=Presidencia+Roque+Saenz+Peña,+Chaco" 
+               target="_blank" 
+               class="btn btn-rosa" 
+               style="width: 100%; box-sizing: border-box; font-size: 0.9rem; text-decoration: none;">
+               VER EN EL MAPA
+            </a>
+        </div>
+
+        <div class="card carousel-card" style="flex: 0 1 450px; margin: 0; min-width: 300px; max-width: 450px;">
+            <button class="nav-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="nav-btn next" onclick="moveSlide(1)">&#10095;</button>
+            
+            <div class="slide active">
+                <img src="https://i.ibb.co/7JpVyhhf/Whats-App-Image-2026-03-07-at-20-21-58.jpg" alt="Seminarios">
+                <div class="slide-caption">Seminarios Mary Kay</div>
+            </div>
+            <div class="slide">
+                <img src="https://storage.googleapis.com/production-ecatalog/assets/catalogs/ca787907-11f7-4af1-9ea1-ab0ea33224cb/Ecatalog_Clinical_Solutions_AR_page1_full.jpg" alt="Eventos">
+                <div class="slide-caption">Eventos de Equipo</div>
+            </div>
+            <div class="slide">
+                <img src="https://i.ibb.co/pvfDsVGn/Whats-App-Image-2026-03-08-at-21-31-31.jpg" alt="Gualok 1">
+                <div class="slide-caption">PRE ÁREA GUALOK</div>
+            </div>
+            <div class="slide">
+                <img src="https://i.ibb.co/zh1y6vyc/Whats-App-Image-2026-03-08-at-21-31-45.jpg" alt="Gualok 2">
+                <div class="slide-caption">PRE ÁREA GUALOK</div>
+            </div>
+            <div class="slide">
+                <video class="carousel-video" style="width: 100%; height: auto; display: block;" playsinline>
+                    <source src="https://www.dropbox.com/scl/fi/428scfw1a12uy2jr0nqkg/WhatsApp-Video-2026-03-07-at-23.17.02.mp4?rlkey=g0edsjkn1a9944qr5g4jiptfb&st=iwaqv7nq&raw=1" type="video/mp4">
+                </video>
+                <div class="slide-caption">Bienvenida Mary Kay</div>
+            </div>
+            <div class="slide">
+                <video class="carousel-video" style="width: 100%; height: auto; display: block;" playsinline>
+                    <source src="https://www.dropbox.com/scl/fi/c4j4l7v1e4rlgdpnjutsi/WhatsApp-Video-2026-03-07-at-23.17.19.mp4?rlkey=6aj25a857k5465j7jlugzcgea&st=x8heq7oc&raw=1" type="video/mp4">
+                </video>
+                <div class="slide-caption">Tips de Belleza</div>
+            </div>
+        </div>
+
+    </div>
+
+    </div> <div style="max-width: 1000px; margin: 0 auto 40px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px;">
+        
+        <div class="card zoom-card">
+            <div class="zoom-details">
+                <h2 style="color: var(--zoom-blue);">Reuniones por ZOOM</h2>
+                <p>Únete a nuestras sesiones exclusivas de capacitación y belleza.</p>
+                <div class="zoom-box">
+                    <strong>ID de reunión:</strong> 306 708 3297<br>
+                    <strong>Contraseña:</strong> AUUn4u
+                </div>
+            </div>
+            <a href="https://us02web.zoom.us/j/3067083297?pwd=Z1Q1SHBZdzdGbG1ReXZVMURoT3RnQT09" target="_blank" class="btn btn-zoom">ENTRAR A LA REUNIÓN</a>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(to right, #ffffff, #fff2f4);">
+            <h2>Catálogo Interactivo</h2>
+            <p>Descubre los últimos lanzamientos y precios vigentes.</p>
+            <a href="https://mkecatalog.appspot.com/?project=mk-argentina&lang=es&appOptions=%7B%22catalogId%22:%22ca787907-11f7-4af1-9ea1-ab0ea33224cb%22,%22catalogPage%22:%221%22%7D" target="_blank" class="btn btn-outline">ABRIR CATÁLOGO DIGITAL</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Vilma Milovich. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+
+    <script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    let autoSlideTimeout;
+    let userInteracted = false;
+
+    // Detectar la primera interacción del usuario para desbloquear el audio
+    const unlockAudio = () => {
+        if (!userInteracted) {
+            userInteracted = true;
+            checkCurrentSlide(); // Reintenta reproducir cuando el usuario toca la página
+            window.removeEventListener('click', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+        }
+    };
+    window.addEventListener('click', unlockAudio);
+    window.addEventListener('touchstart', unlockAudio);
+
+    document.addEventListener("visibilitychange", () => {
+        const videos = document.querySelectorAll('video');
+        if (document.hidden) {
+            videos.forEach(v => v.pause());
+        } else {
+            const activeVideo = slides[slideIndex].querySelector('video');
+            if (activeVideo && userInteracted) activeVideo.play().catch(e => {});
+        }
+    });
+
+    function moveSlide(n) {
+        const videos = document.querySelectorAll('video');
+        videos.forEach(v => {
+            v.pause();
+            v.currentTime = 0; 
+            v.onclick = null;
+        });
+
+        slides[slideIndex].classList.remove('active');
+        slideIndex = (slideIndex + n + slides.length) % slides.length;
+        slides[slideIndex].classList.add('active');
+
+        clearTimeout(autoSlideTimeout);
+        checkCurrentSlide();
+    }
+
+    function checkCurrentSlide() {
+        const currentSlide = slides[slideIndex];
+        const videoInSlide = currentSlide.querySelector('video');
+
+        if (videoInSlide) {
+            videoInSlide.style.cursor = "pointer"; 
+            videoInSlide.onclick = function() {
+                if (this.paused) this.play();
+                else this.pause();
+            };
+
+            // Intentar reproducir
+            const playPromise = videoInSlide.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Si falla por el bloqueo del navegador, lo silenciamos para que al menos se mueva
+                    // O simplemente esperamos al primer clic del usuario (unlockAudio)
+                    console.log("Autoplay esperando interacción del usuario.");
+                });
+            }
+            
+            videoInSlide.onended = function() {
+                moveSlide(1);
+            };
+        } else {
+            autoSlideTimeout = setTimeout(() => moveSlide(1), 5000);
+        }
+    }
+
+    window.onload = function() {
+        // Un pequeño delay para asegurar que el DOM esté listo
+        setTimeout(checkCurrentSlide, 100);
+    };
+</script>
+
+</html>
